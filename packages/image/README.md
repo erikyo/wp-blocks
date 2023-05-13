@@ -1,5 +1,13 @@
 # @wp-blocks/image
 
+## Features
+- 🖼️ Efficient: Compresses and optimizes images using various algorithms to reduce file size and make your website load faster.
+- 🔄 Supports multiple image formats: Can handle JPG, PNG, GIF, SVG, TIFF, AVIF, and WEBP files.
+- 🌍 Better for the web: Generates compressed images that are optimized for the web, helping to reduce data usage and improve website performance.
+- ⚡️ Lightning-fast: Uses optimized algorithms and parallel processing to compress and optimize images as quickly as possible.
+- 🛡️ Bulletproof: Written in strict TypeScript
+- 💻 CLI and configuration file options: Supports command-line arguments and an ini file for easy and efficient use, and prompts you for input if no configuration is found.
+
 ## What is this?
 A Node.js command-line tool to compress and optimize images, using different algorithms to reduce file size.
 
@@ -50,7 +58,7 @@ The script supports the following image formats:
 
 ### Configuration
 
-The script can be configured using command-line arguments or an INI file.
+The script can be configured using command-line arguments or by providing a configuration file. If no arguments are specified and no configuration file is found, the script will prompt the user to enter the required information.
 
 #### Command-Line Arguments
 The following command-line arguments are available:
@@ -64,9 +72,9 @@ The following command-line arguments are available:
 #### INI File
 The script also supports an INI file named .image in the project directory. The file should have the following sections and keys:
 
-[path] This section contains the in and out keys, which specify the input and output directories, respectively.
+**path** This section contains the in and out keys, which specify the input and output directories, respectively.
 
-[format] This section specifies the compression options for a specific image format, where <format> is one of the supported formats listed above. The available keys are compressor and quality for most formats, and options for SVGs.
+**format[]** This section specifies the compression options for a specific image format, where <format> is one of the supported formats listed above. The available keys are compressor and quality for most formats, and options for SVGs.
 Here's an example .image file:
 
 ```ini

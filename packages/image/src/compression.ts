@@ -61,17 +61,21 @@ function getOutputExtension( compressor: Compressor, originalExt ) {
  * The function converts images in a source directory to a specified format and
  * compresses them, while also copying non-image files to a destination directory.
  *
- * @param srcDir             The source directory from where the images will be read and
- *                           converted.
- * @param distDir            The destination directory where the converted images will be
- *                           saved. If no value is provided, the images will be saved in the same directory as
- *                           the source images.
- * @param compressionOptions An optional object that contains compression options
- *                           for different image formats. The default value is an empty object. The object should
- *                           have keys that correspond to image formats (e.g. "jpg", "png", "webp") and values
- *                           that are objects containing compression options for that format (e.g. "
+ * @param opt                    The options object
+ * @param opt.srcDir             The source directory from where the images will be read and
+ *                               converted.
+ * @param opt.distDir            The destination directory where the converted images will be
+ *                               saved. If no value is provided, the images will be saved in the same directory as
+ *                               the source images.
+ * @param opt.compressionOptions An optional object that contains compression options
+ *                               for different image formats. The default value is an empty object. The object should
+ *                               have keys that correspond to image formats (e.g. "jpg", "png", "webp") and values
+ *                               that are objects containing compression options for that format (e.g. "no", "mozjpeg", "jpeg").
  */
-export function convertImages( srcDir, distDir = '', compressionOptions = {} ) {
+export function convertImages( opt ) {
+	// destructuring the options
+	const { srcDir, distDir, compressionOptions } = opt;
+
 	// Get a list of files in the source directory
 	const files = fs.readdirSync( srcDir );
 
@@ -92,7 +96,11 @@ export function convertImages( srcDir, distDir = '', compressionOptions = {} ) {
 			console.log( `Converted ${ file } to ${ subDir }` );
 
 			// Call this function on the subdirectory
-			convertImages( filePath, subDir, compressionOptions );
+			convertImages( {
+				srcDir: filePath,
+				distDir: subDir,
+				compressionOptions,
+			} );
 		} else {
 			// Get the extension of the file
 			const extension = path.extname( filePath ).toLowerCase();

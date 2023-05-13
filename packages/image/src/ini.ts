@@ -1,4 +1,5 @@
 import fs from 'fs';
+
 import ini from 'ini';
 
 import { inputFormats } from './constants.js';
@@ -6,7 +7,11 @@ import { inputFormats } from './constants.js';
 /**
  * Get the script options from the configuration file.
  */
-export function getIniOptions() {
+export function getIniOptions(): {
+	srcDir?: string;
+	distDir?: string;
+	compressionOptions?: object
+} {
 	let iniOptions;
 	const options = {
 		compressionOptions: {},
@@ -21,6 +26,7 @@ export function getIniOptions() {
 		console.log(
 			'image: No configuration file found. Please read the ReadMe to know more about!'
 		);
+		return {};
 	}
 
 	if ( Object.keys( iniOptions ).length ) {
@@ -42,11 +48,11 @@ export function getIniOptions() {
 					progressive:
 						format === 'jpg'
 							? iniOptions?.[ format ]?.progressive ?? true
-							: null,
+							: undefined,
 					options:
 						format === 'svg'
 							? iniOptions?.[ format ]?.options ?? []
-							: null,
+							: undefined,
 				};
 			} );
 	}
