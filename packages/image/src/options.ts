@@ -109,7 +109,7 @@ const promptsToAsk = ( format: InputFormats ): PromptObject[] => [
 		},
 		name: 'quality',
 		message: 'Enter the quality (1-100):',
-		initial: 75,
+		initial: 80,
 		min: 1,
 		max: 100,
 	},

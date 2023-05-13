@@ -50,10 +50,42 @@ The script supports the following image formats:
 
 ### Configuration
 
-The following configuration options are available in the script:
+The script can be configured using command-line arguments or an INI file.
 
-- `compressors`: An array of available compression algorithms. By default, it includes `avif`, `webp`, and `mozjpeg`.
-- `svgOptions`: An array of available SVGO plugins. By default, it includes the most commonly used plugins to optimize SVG files.
+#### Command-Line Arguments
+The following command-line arguments are available:
+
+--in <path>: Specifies the path to the input directory.
+
+--out <path>: Specifies the path to the output directory.
+
+--help: Shows the help message.
+
+#### INI File
+The script also supports an INI file named .image in the project directory. The file should have the following sections and keys:
+
+[path] This section contains the in and out keys, which specify the input and output directories, respectively.
+
+[format] This section specifies the compression options for a specific image format, where <format> is one of the supported formats listed above. The available keys are compressor and quality for most formats, and options for SVGs.
+Here's an example .image file:
+
+```ini
+[path]
+in = ./src/images
+out = ./images
+
+[jpg]
+compressor = mozjpeg
+quality = 85
+progressive = true
+
+[png]
+compressor = webp
+quality = 80
+
+[svg]
+options = CleanupAttrs, RemoveDoctype, RemoveXMLProcInst, RemoveComments, RemoveMetadata, RemoveXMLNS, RemoveEditorsNSData, RemoveTitle, RemoveDesc, RemoveUselessDefs, RemoveEmptyAttrs, RemoveHiddenElems, RemoveEmptyContainers, RemoveEmptyText, RemoveUnusedNS, ConvertShapeToPath, SortAttrs, MergePaths, SortDefsChildren, RemoveDimensions, RemoveStyleElement, RemoveScriptElement, InlineStyles, removeViewBox, removeElementsByAttr, cleanupIDs, convertColors, removeRasterImages, removeUselessStrokeAndFill, removeNonInheritableGroupAttrs,
+```
 
 ## License
 

@@ -8,6 +8,9 @@ import {
 	srcDirQuestion,
 } from './options.js';
 import { getImageFormatsInFolder } from './utils.js';
+import {getIniOptions} from "./ini.js";
+import {getCliOptions} from "./args.js";
+
 
 /**
  * Prompts the user for the source and destination directories
@@ -16,16 +19,38 @@ import { getImageFormatsInFolder } from './utils.js';
  * @returns Promise that resolves when the image conversion is complete
  */
 export default async function main() {
-	const { srcDir, distDir } = await prompts( [
-		srcDirQuestion,
-		distDirQuestion,
-	] );
+	let { srcDir, distDir, compressionOptions } = getIniOptions();
 
-	// Get the image formats
-	const imageFormats = getImageFormatsInFolder( srcDir );
+	const cliOptions = getCliOptions();
 
-	// Get the compression options
-	const compressionOptions = await getImageCompressionOptions( imageFormats );
+	console.log(cliOptions);
+
+	// If the source directory is not specified, prompt the user
+	if ( ! srcDir ) {
+		const response = await prompts( srcDirQuestion );
+		srcDir = response.srcDir;
+	}
+
+	// If the destination directory is not specified, prompt the user
+	if ( ! distDir ) {
+		const response = await prompts( distDirQuestion );
+		distDir = response.distDir;
+	}
+
+	// If the compression options are not specified, prompt the user
+	if ( compressionOptions ) {
+		// Get the image formats
+		const imageFormats = getImageFormatsInFolder( srcDir );
+
+		// If no image formats are found, return
+		if ( ! imageFormats.length ) {
+			console.log( 'No image formats found in the source directory' );
+			return;
+		}
+
+		// Prompt the user for compression options
+		compressionOptions = await getImageCompressionOptions( imageFormats );
+	}
 
 	// Start the timer
 	const startTime = Date.now();
