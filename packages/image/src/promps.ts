@@ -5,13 +5,12 @@ import {
 	getImageCompressionOptions,
 	srcDirQuestion,
 } from './options.js';
+import { scriptOptions } from './types.js';
 import { getImageFormatsInFolder } from './utils.js';
 
-export async function getPromptOptions( options: {
-	srcDir?: string;
-	distDir?: string;
-	compressionOptions?: object;
-} ) {
+export async function getPromptOptions(
+	options: scriptOptions
+): Promise< scriptOptions > {
 	// If the source directory is not specified, prompt the user
 	if ( ! options.srcDir ) {
 		const response = await prompts( srcDirQuestion );
@@ -32,7 +31,7 @@ export async function getPromptOptions( options: {
 		// If no image formats are found, return
 		if ( ! imageFormats.length ) {
 			console.log( 'No image formats found in the source directory' );
-			return;
+			return options;
 		}
 
 		// Prompt the user for compression options

@@ -3,35 +3,36 @@ import fs from 'fs';
 import ini from 'ini';
 
 import { inputFormats } from './constants.js';
+import { scriptOptions } from './types.js';
 
 /**
  * Get the script options from the configuration file.
+ *
+ * @param options
  */
-export function getIniOptions(): {
-	srcDir?: string;
-	distDir?: string;
-	compressionOptions?: object
-} {
+export function getIniOptions( options ): scriptOptions {
 	let iniOptions;
-	const options = {
-		compressionOptions: {},
-		srcDir: '',
-		distDir: '',
-	};
 
 	try {
 		// Get the compression options in the configuration file
-		iniOptions = ini.parse( fs.readFileSync( './.image', 'utf-8' ) );
+		iniOptions = ini.parse(
+			fs.readFileSync( options.configFile, 'utf-8' )
+		);
 	} catch ( err ) {
 		console.log(
 			'image: No configuration file found. Please read the ReadMe to know more about!'
 		);
-		return {};
+		return options;
+	}
+
+	// If the compression options are not specified, add them
+	if ( ! options.compressionOptions ) {
+		options.compressionOptions = {};
 	}
 
 	if ( Object.keys( iniOptions ).length ) {
-		options.srcDir = iniOptions?.paths?.in ?? '';
-		options.distDir = iniOptions?.paths?.out ?? '';
+		options.srcDir = iniOptions?.path?.in ?? undefined;
+		options.distDir = iniOptions?.path?.out ?? undefined;
 
 		// parse known options
 		inputFormats
@@ -56,5 +57,6 @@ export function getIniOptions(): {
 				};
 			} );
 	}
+	console.log( 'configuration file loaded, options:', options );
 	return options;
 }

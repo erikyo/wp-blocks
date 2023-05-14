@@ -11,26 +11,25 @@ import { getPromptOptions } from './promps.js';
  * @returns Promise that resolves when the image conversion is complete
  */
 export default async function main() {
-	const iniOptions = getIniOptions();
+	// Get the cli options
+	let options = getCliOptions();
 
-	const cliOptions = getCliOptions();
+	// Get the options from the ini file
+	options = getIniOptions( options );
 
-	const options = await getPromptOptions( {
-		srcDir: cliOptions.srcDir ?? iniOptions.srcDir,
-		distDir: cliOptions.distDir ?? iniOptions.distDir,
-		compressionOptions: iniOptions.compressionOptions,
-	} );
+	// Prompt the user for the script options
+	options = await getPromptOptions( options );
 
 	// Start the timer
 	const startTime = Date.now();
 
 	// Then convert the images in the source directory
-	convertImages( options );
-
-	// Print the time elapsed
-	console.log(
-		'Time elapsed:',
-		( Date.now() - startTime ) / 1000,
-		'seconds'
-	);
+	convertImages( options ).then( () => {
+		// Print the time elapsed
+		console.log(
+			'The end 🎉 - Time elapsed:',
+			( Date.now() - startTime ) / 1000,
+			'seconds'
+		);
+	} );
 }

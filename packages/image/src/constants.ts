@@ -1,5 +1,9 @@
 import { Choice } from 'prompts';
 
+export const defaultSrc = './src/images';
+export const defaultDist = './images';
+export const defaultConfigFile = './.image';
+
 export const compressors = [ 'avif', 'webp', 'mozjpeg', 'jpg', 'png' ] as const;
 
 export type Compressor = typeof compressors[ number ];

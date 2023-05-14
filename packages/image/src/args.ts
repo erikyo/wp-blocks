@@ -1,12 +1,12 @@
 import yargs from 'yargs';
 
+import { defaultConfigFile, defaultDist, defaultSrc } from './constants.js';
+import { scriptOptions } from './types.js';
+
 /**
  * Get the command-line options
  */
-export function getCliOptions(): {
-	srcDir: string | undefined;
-	distDir: string | undefined;
-} {
+export function getCliOptions(): scriptOptions {
 	// Check for command-line arguments
 	const argv = yargs( process.argv.slice( 2 ) )
 		.usage( 'Usage: $0 [options]' )
@@ -14,13 +14,16 @@ export function getCliOptions(): {
 			alias: 'i',
 			describe: 'Source directory',
 			type: 'string',
-			demandOption: false,
 		} )
 		.option( 'out', {
 			alias: 'o',
 			describe: 'Destination directory',
 			type: 'string',
-			demandOption: false,
+		} )
+		.option( 'config', {
+			alias: 'c',
+			describe: 'Configuration File',
+			type: 'string',
 		} )
 		.option( 'verbose', {
 			alias: 'v',
@@ -32,7 +35,10 @@ export function getCliOptions(): {
 		.parseSync();
 
 	return {
-		srcDir: argv.in ?? undefined,
-		distDir: argv.out ?? undefined,
+		srcDir: argv.in ?? defaultSrc,
+		distDir: argv.out ?? defaultDist,
+		configFile: argv.config ?? defaultConfigFile,
+		verbose: argv.verbose ?? false,
+		compressionOptions: undefined,
 	};
 }
