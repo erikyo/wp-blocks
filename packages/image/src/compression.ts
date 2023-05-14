@@ -80,7 +80,7 @@ export function convertImages( opt ) {
 	const files = fs.readdirSync( srcDir );
 
 	// Loop through the files in the directory
-	files.forEach( ( file: string ) => {
+	const promises = files.map( ( file: string ) => {
 		// Get the full path of the file
 		const filePath = path.join( srcDir, file );
 
@@ -96,96 +96,89 @@ export function convertImages( opt ) {
 			console.log( `Converted ${ file } to ${ subDir }` );
 
 			// Call this function on the subdirectory
-			convertImages( {
+			return convertImages( {
 				srcDir: filePath,
 				distDir: subDir,
 				compressionOptions,
 			} );
-		} else {
-			// Get the extension of the file
-			const extension = path.extname( filePath ).toLowerCase();
+		}
 
-			// Set the default options for the image format
-			const options = getCompressionOptions(
-				extension,
-				compressionOptions
+		// Save the image to the destination directory
+		const distPath = path.join( distDir, file );
+
+		// Get the extension of the file
+		const extension = path.extname( filePath ).toLowerCase();
+
+		// Set the default options for the image format
+		const options = getCompressionOptions( extension, compressionOptions );
+
+		// create the output directory if it doesn't exist
+		if ( ! fs.existsSync( distDir ) ) {
+			fs.mkdirSync( distDir );
+		}
+
+		// Check if the file is an image
+		if ( asInputFormats( extension ) && options ) {
+			// The output file name
+			const distFileName = distPath.concat(
+				getOutputExtension( options.compressor, extension )
 			);
 
-			// Check if the file is an image
-			if ( asInputFormats( extension ) && options ) {
-				// Apply compression options
-				if ( extension === '.svg' ) {
-					// Save the image to the destination directory
-					const distPath = distDir
-						? path.join( distDir, file )
-						: filePath;
-					// Save the image to the destination directory
-					optimizeSvg( filePath, distPath, { ...options.plugins } );
-				} else {
-					// Load the image with sharp
-					let image = sharp( filePath );
-
-					// Apply compression options if specified in the options
-					if ( options.compressor ) {
-						switch ( options.compressor ) {
-							case 'avif':
-								image = image.avif( {
-									quality: options.quality,
-								} );
-								break;
-							case 'webp':
-								image = image.webp( {
-									quality: options.quality,
-								} );
-								break;
-							case 'mozjpeg':
-								image = image.jpeg( {
-									mozjpeg: true,
-									quality: options.quality,
-								} );
-								break;
-							case 'png':
-								image = image.png();
-								break;
-							case 'jpg':
-								image = image.jpeg( {
-									quality: options.quality,
-									progressive: options.progressive,
-								} );
-								break;
-						}
-					}
-
-					// Save the image to the destination directory
-					const distPath = distDir
-						? path.join( distDir, file )
-						: filePath;
-
-					// Save the image to the destination directory
-					const distFileName = distPath.concat(
-						getOutputExtension( options.compressor, extension )
-					);
-
-					console.log(
-						`File converted from ${ filePath } to ${ distFileName }`
-					);
-
-					return image.toFile( distFileName );
-				}
+			// Apply compression options
+			if ( extension === '.svg' ) {
+				// Save the image to the destination directory
+				optimizeSvg( filePath, distPath, { ...options.plugins } );
 			} else {
-				// Copy the file to the destination directory
-				const distFileName = path.join( distDir, file );
+				// Load the image with sharp
+				let image = sharp( filePath );
 
-				// Read the contents of the file
-				const fileContent = fs.readFileSync( filePath );
+				// Apply compression options if specified in the options
+				if ( options.compressor ) {
+					switch ( options.compressor ) {
+						case 'avif':
+							image = image.avif( {
+								quality: options.quality,
+							} );
+							break;
+						case 'webp':
+							image = image.webp( {
+								quality: options.quality,
+							} );
+							break;
+						case 'mozjpeg':
+							image = image.jpeg( {
+								mozjpeg: true,
+								quality: options.quality,
+							} );
+							break;
+						case 'png':
+							image = image.png();
+							break;
+						case 'jpg':
+							image = image.jpeg( {
+								quality: options.quality,
+								progressive: options.progressive,
+							} );
+							break;
+					}
+				}
 
 				console.log(
-					`File copied from ${ filePath } to ${ distFileName }`
+					`File converted from ${ filePath } to ${ distFileName }`
 				);
 
-				// Write the contents to the destination file
-				return fs.writeFileSync( distFileName, fileContent );
+				return image.toFile( distFileName );
 			}
+		} else {
+			console.log( `File copied from ${ filePath } to ${ distPath }` );
+
+			// Write the contents to the destination file
+			return fs.promises.copyFile( filePath, distPath );
 		}
+	} );
+
+	// Wait for all promises to resolve before returning
+	return Promise.all( promises ).then( () => {
+		return true;
 	} );
 }
