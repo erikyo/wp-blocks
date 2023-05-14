@@ -15,5 +15,6 @@ export interface scriptOptions {
 	distDir: string;
 	configFile: string;
 	verbose: boolean;
+	interactive: boolean;
 	compressionOptions?: { [ key in InputFormats ]: CompressionOptions };
 }

@@ -25,6 +25,11 @@ export function getCliOptions(): scriptOptions {
 			describe: 'Configuration File',
 			type: 'string',
 		} )
+		.option( 'interactive', {
+			alias: 'i',
+			describe: 'Interactive mode',
+			type: 'boolean',
+		} )
 		.option( 'verbose', {
 			alias: 'v',
 			type: 'boolean',
@@ -38,6 +43,7 @@ export function getCliOptions(): scriptOptions {
 		srcDir: argv.in ?? defaultSrc,
 		distDir: argv.out ?? defaultDist,
 		configFile: argv.config ?? defaultConfigFile,
+		interactive: argv.interactive ?? false,
 		verbose: argv.verbose ?? false,
 		compressionOptions: undefined,
 	};

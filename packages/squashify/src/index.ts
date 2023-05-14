@@ -18,7 +18,9 @@ export default async function main() {
 	options = getIniOptions( options );
 
 	// Prompt the user for the script options
-	options = await getPromptOptions( options );
+	if ( options.interactive ) {
+		options = await getPromptOptions( options );
+	}
 
 	// Start the timer
 	const startTime = Date.now();

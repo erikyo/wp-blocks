@@ -3,7 +3,7 @@
 	"files": [],
 	"references": [
 		{ "path": "./examples/counter" },
-		{ "path": "./packages/image" },
+		{ "path": "./packages/squashify" },
 		{ "path": "./packages/types" },
 		{ "path": "./packages/utils" },
 		{ "path": "./packages/vinyl" },

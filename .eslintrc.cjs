@@ -51,7 +51,7 @@ module.exports = {
 					'./packages/utils',
 					'./packages/vinyl',
 					'./packages/wp-deps',
-					'./packages/image',
+					'./packages/squashify',
 				],
 			},
 		],
@@ -92,7 +92,7 @@ module.exports = {
 			},
 		},
 		{
-			files: [ 'packages/image/**/*' ],
+			files: [ 'packages/squashify/**/*' ],
 			rules: {
 				'no-console': 'off',
 			},
